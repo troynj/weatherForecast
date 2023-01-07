@@ -5,8 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecase</title>
+    <!--CSS-->
     <link rel="stylesheet" href="./assets/css/style.css">
-</head>
+    <!-- Link the DayJS library -->
+    <script
+    src="https://cdn.jsdelivr.net/npm/dayjs@1.11.3/dayjs.min.js"
+    integrity="sha256-iu/zLUB+QgISXBLCW/mcDi/rnf4m4uEDO0wauy76x7U="
+    crossorigin="anonymous"
+  ></script>
+  <!--jQuery-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    </head>
 <body>
     <header></header>
 <aside>
@@ -18,22 +28,24 @@
     <section id="history"></section>
 </aside>
     <main>
-        <section>
+        <section id="today">
             <span id="title">
                 <h2 id="city"></h2>
                 <h2 id="date"></h2>
-                <h2 id="icon"></h2>
+                <img id="icon"></img>
             </span>
             <p id="temp"></p>
             <p id="wind"></p>
             <p id="humidity"></p>
         </section>
         <section>
-            <h2 id="forecast-title"></h2>
+            <h2 id="forecast-title">5-Day Forecast</h2>
             <article id="forecast"></article>
         </section>
     </main>
     
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> -->
+    <script src="./assets/js/script.js"></script>
 </body>
-<script src="./assets/js/script.js"></script>
+
 </html>

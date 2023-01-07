@@ -1,0 +1,12 @@
+body{
+    display:flex;
+    flex-direction:row;
+}
+#title {
+    display:flex;
+    flex-direction: row;
+}
+#today {
+    padding-left: .5em;
+    outline: 2px solid black;
+}
