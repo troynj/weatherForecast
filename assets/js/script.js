@@ -4,50 +4,74 @@
 
 var apikey = "d91f911bcf2c0f925fb6535547a5ddc9";
 var city = "houston";
-var myDay = dayjs();
 
 function getWeather() {
-    //var requestUrl = api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
-    var requestUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apikey}&units=imperial`
-    fetch(requestUrl)
+  //var requestUrl = api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+  var requestUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apikey}&units=imperial`;
+  fetch(requestUrl)
     .then((response) => {
-            return response.json()
+      return response.json();
     })
     .then((data) => {
-        console.log("data", data)
-        weatherCard(data, 0)
+      console.log("data", data);
 
-    })
-}
-
-function weatherCard(data) {
-    var dataArr = [getCity(data), getDate(), getIcon(data, 0), getTemp(data, 0), getWind(data, 0)]
-    
-    for(var i = 0; i <dataArr.length; i++) {
-    $("#forecast").append(dataArr[i])
-    }
-    
-    
-
-
+      for (var j = 0; j < 40; j += 8) {
+        weatherCard(data, j);
+      }
+    });
 }
 
-function getCity(data) {   return $("<p>").attr("class", "city").text(data.city.name)
-}
-function getDate() {   return $("<p>").attr("class", "date").text("(" + myDay.format('MM/DD/YY') + ")")
-}
-function getIcon(data, i) {    
-    icon = data.list[i].weather[i].icon
-    
-    return $("<p>").attr("class", "icon").attr("src", `http://openweathermap.org/img/wn/${icon}.png` )
-}
-function getTemp(data, i) {   return $('<p>').attr("class", "temp").text(data.list[i].main.temp + "°F")
-}
-function getWind(data, i) {   return $('<p>').attr("class", "wind").text(data.list[i].wind.speed + " MPH")
-}
-function getHumidity(data, i) {    return $('<p>').attr("class", "humidity").text(data.list[i].main.humidity + " %")
+function weatherCard(data, d) {
+  var dataArr = [
+    getDate(data, d),
+    getIcon(data, d),
+    getTemp(data, d),
+    getWind(data, d),
+    getHumidity(data, d),
+  ];
+
+  for (var i = 0; i < dataArr.length; i++) {
+    //console.log(d)
+    //console.log(d/8)
+    // console.log($(`#day${d/8}`))
+    $(`#day${d / 8}`).append(dataArr[i]);
+  }
 }
 
-getWeather()
+function getCity(data) {
+  return $("<p>").attr("class", "city").text(data.city.name);
+}
+function getDate(data, d) {
+  var rawD = data.list[d].dt_txt;
+  var parD = rawD.split(/[\s-]/);
+
+  return $("<p>")
+    .attr("class", "date")
+    .text("(" + parD[1] + "/" + parD[2] + "/" + parD[0] + ") - " + parD[3]);
+}
+function getIcon(data, d) {
+  icon = data.list[d].weather[0].icon;
+
+  return $("<img>")
+    .attr("class", "icon")
+    .attr("src", `http://openweathermap.org/img/wn/${icon}.png`);
+}
+function getTemp(data, d) {
+  return $("<p>")
+    .attr("class", "temp")
+    .text(data.list[d].main.temp + "°F");
+}
+function getWind(data, d) {
+  return $("<p>")
+    .attr("class", "wind")
+    .text(data.list[d].wind.speed + " MPH");
+}
+function getHumidity(data, d) {
+  return $("<p>")
+    .attr("class", "humidity")
+    .text(data.list[d].main.humidity + " %");
+}
+
+getWeather();
 
 //function getSearch()
