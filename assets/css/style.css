@@ -10,3 +10,21 @@ body{
     padding-left: .5em;
     outline: 2px solid black;
 }
+
+#fc-section {
+    display:flex;
+    flex-direction: row;
+}
+
+.fc-card{
+    background-color: rgba(135, 135, 135, 0.609);
+    margin: .5em;
+    padding: .5em;
+    outline: 2px solid black;
+    border-radius: 25px;
+
+}
+#history {
+    display:flex;
+    flex-direction: column;
+}
