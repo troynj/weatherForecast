@@ -1,33 +1,31 @@
-//var apikey = "e5e80f690a1de46cd1c48d028667801f"
+var apikey = "e5e80f690a1de46cd1c48d028667801f";
 //icon http://openweathermap.org/img/wn/${icon}.png
 // icon http://openweathermap.org/img/wn/10d@2x.png
 
-var apikey = "d91f911bcf2c0f925fb6535547a5ddc9";
+//var apikey = "d91f911bcf2c0f925fb6535547a5ddc9";
 
- var cityArr = new Array();
-$('#search-btn').on('click', searchQuery)
+var cityArr = new Array();
+$("#search-btn").on("click", searchQuery);
 
 function searchQuery() {
-    cityArr.push($('#user-input').val())
-    console.log(cityArr)
-    clearCards()
-    getForecast($('#user-input').val());
-    createButton()
-    
+  cityArr.push($("#user-input").val());
+  console.log(cityArr);
+  clearCards();
+  getForecast($("#user-input").val());
+  //putting createButton(); in getForecast
 }
 
-function createButton() {
-    var userInputEl = $('#user-input').val()
-    var newButton = $('<button>')
-    newButton.text(userInputEl)
-    newButton.on("click", () => { 
-        $('#user-input').val(userInputEl)
-        searchQuery()
-    });
-    $('#history').append(newButton)
+function createButton(city) {
+  // var userInputEl = $("#user-input").val();
+  var newButton = $("<button>");
+  //newButton.text(userInputEl);
+  newButton.text(city);
+  newButton.on("click", () => {
+    $("#user-input").val(city);
+    searchQuery();
+  });
+  $("#history").append(newButton);
 }
-
-
 
 function getForecast(city) {
   //var requestUrl = api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
@@ -39,10 +37,11 @@ function getForecast(city) {
     .then((data) => {
       console.log("data", data);
 
-      for (var daysToForcast = 0;  daysToForcast < 40; daysToForcast += 8) {
+      for (var daysToForcast = 0; daysToForcast < 40; daysToForcast += 8) {
         renderFcCard(data, daysToForcast, "<p>", false);
       }
       renderFcCard(data, 0, "<h2>", true);
+      createButton(data.city.name);
     });
 }
 
@@ -62,11 +61,14 @@ function renderFcCard(data, d, element, main) {
     $("#today").append(dataArr[2]);
     $("#today").append(dataArr[3]);
     $("#today").append(dataArr[4]);
-  } else {
+  } else if (d % 8 === 0) {//double check - d should always have 0 remainder from % 8
+    console.log("d");
+    var fcSectionEl = $("#fc-section");
+    var tempArt = $("<article>");
+    tempArt.attr("id", `day${d / 8}`).addClass("fc-card");
+    fcSectionEl.append(tempArt);
+
     for (var i = 0; i < dataArr.length; i++) {
-      //console.log(d)
-      //console.log(d/8)
-      // console.log($(`#day${d/8}`))
       $(`#day${d / 8}`).append(dataArr[i]);
     }
   }
@@ -107,14 +109,7 @@ function getHumidity(data, d) {
 }
 
 function clearCards() {
-    $("#today").empty();
-    $("#today").append($('<span>').attr("id", "title"));
-    
-        for (var i = 0; i < 5; i++) {
-          //console.log(d)
-          //console.log(d/8)
-          // console.log($(`#day${d/8}`))
-          $(`#day${i}`).empty();
-        }
-      
+  $("#today").empty();
+  $("#today").append($("<span>").attr("id", "title"));
+  $(`#fc-section`).empty();
 }
