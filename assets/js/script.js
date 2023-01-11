@@ -1,90 +1,111 @@
 var apikey = "e5e80f690a1de46cd1c48d028667801f";
-//icon http://openweathermap.org/img/wn/${icon}.png
-// icon http://openweathermap.org/img/wn/10d@2x.png
-
-//var apikey = "d91f911bcf2c0f925fb6535547a5ddc9";
-
 var cityArr = new Array();
-$("#search-btn").on("click", searchQuery);
+
+$("#search-form").submit(() => {
+  event?.preventDefault();
+
+  $("#user-input").val() && searchQuery();
+});
 
 function searchQuery() {
+  clearData();
   cityArr.push($("#user-input").val());
-  console.log(cityArr);
-  clearCards();
   getForecast($("#user-input").val());
-  //putting createButton(); in getForecast
+  $("#user-input").val("");
 }
 
-function createButton(city) {
-  // var userInputEl = $("#user-input").val();
-  var newButton = $("<button>");
-  //newButton.text(userInputEl);
-  newButton.text(city);
-  newButton.on("click", () => {
-    $("#user-input").val(city);
-    searchQuery();
-  });
-  $("#history").append(newButton);
+function clearData() {
+  $("#today").empty();
+  $("#today").append($("<span>").attr("id", "title"));
+  $("#fc-section").empty();
+
 }
 
+//gives access to location
 function getForecast(city) {
-  //var requestUrl = api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
   var requestUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apikey}&units=imperial`;
+
+  fetch(requestUrl)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      createButton(city);
+      for (var day = 0; day < 40; day += 8) {
+        forecastWeather(data, day)
+      }
+      getCurrent(data.city.coord);
+    });
+}
+
+function getCurrent(location) {
+  var requestUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=${apikey}&units=imperial`;
   fetch(requestUrl)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       console.log("data", data);
-
-      for (var daysToForcast = 0; daysToForcast < 40; daysToForcast += 8) {
-        renderFcCard(data, daysToForcast, "<p>", false);
-      }
-      renderFcCard(data, 0, "<h2>", true);
-      createButton(data.city.name);
+      currentWeather(data);
     });
 }
 
-function renderFcCard(data, d, element, main) {
+function forecastWeather(data, day) {
   var dataArr = [
-    getDate(data, d, element),
-    getIcon(data, d),
-    getTemp(data, d),
-    getWind(data, d),
-    getHumidity(data, d),
+    //getDate(data, day),
+    getIcon(data, day),
+    getTemp(data, day),
+    getWind(data, day),
+    getHumidity(data, day),
   ];
 
-  if (main) {
-    $("#title").append(getCity(data));
-    $("#title").append(dataArr[0]);
-    $("#title").append(dataArr[1]);
-    $("#today").append(dataArr[2]);
-    $("#today").append(dataArr[3]);
-    $("#today").append(dataArr[4]);
-  } else if (d % 8 === 0) {//double check - d should always have 0 remainder from % 8
-    console.log("d");
-    var fcSectionEl = $("#fc-section");
-    var tempArt = $("<article>");
-    tempArt.attr("id", `day${d / 8}`).addClass("fc-card");
-    fcSectionEl.append(tempArt);
+  var fcSectionEl = $("#fc-section");
+  var tempArt = $("<article>");
+  tempArt.attr("id", `day${day / 8}`).addClass("fc-card");
+  fcSectionEl.append(tempArt);
 
-    for (var i = 0; i < dataArr.length; i++) {
-      $(`#day${d / 8}`).append(dataArr[i]);
-    }
+  for (var i = 0; i < dataArr.length; i++) {
+    $(`#day${day / 8}`).append(dataArr[i]);
   }
+}
+
+function currentWeather(data) {
+
+  var currentDate = new Date(data.dt)
+  console.log(currentDate)
+  console.log(currentDate.toLocaleString("GMT"))
+  var cityEl = $("<h2>").text(data.name);
+  var dateEl = $("<h2>").text(data.dt);
+  var icon = data.weather[0].icon;
+  var iconEl = $("<img>")
+    .attr("class", "icon")
+    .attr("src", `http://openweathermap.org/img/wn/${icon}.png`);
+  // console.log(data.weather[0].icon);
+  $("#title").append(cityEl, dateEl, iconEl);
+}
+
+function createButton(city) {
+  var newButton = $("<button>").text(city);
+  newButton.click((event) => {
+    $("#user-input").val(city);
+    searchQuery();
+    event.target.remove();
+  });
+  $("#history").prepend(newButton);
 }
 
 function getCity(data) {
   return $("<h2>").attr("class", "city").text(data.city.name);
 }
-function getDate(data, d, element) {
-  var rawD = data.list[d].dt_txt;
-  var parD = rawD.split(/[\s-]/);
+// function getDate(data, d, element) {
+//   var rawD = data.list[d].dt_txt;
+//   var parD = rawD.split(/[\s-]/);
 
-  return $(`${element}`)
-    .attr("class", "date")
-    .text("(" + parD[1] + "/" + parD[2] + "/" + parD[0] + ")");
-}
+//   return $(`${element}`)
+//     .attr("class", "date")
+//     .text("(" + parD[1] + "/" + parD[2] + "/" + parD[0] + ")");
+// }
 function getIcon(data, d) {
   icon = data.list[d].weather[0].icon;
 
@@ -106,10 +127,4 @@ function getHumidity(data, d) {
   return $("<p>")
     .attr("class", "humidity")
     .text(data.list[d].main.humidity + " %");
-}
-
-function clearCards() {
-  $("#today").empty();
-  $("#today").append($("<span>").attr("id", "title"));
-  $(`#fc-section`).empty();
 }
