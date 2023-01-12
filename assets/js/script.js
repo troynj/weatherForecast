@@ -1,16 +1,25 @@
 var apikey = "e5e80f690a1de46cd1c48d028667801f";
 var cityArr = new Array();
-var bgWidth = 700
-var bgHeight = 900
+var bgWidth = 700;
+var bgHeight = 900;
+function init() {
+  $("#user-input").val("San Francisco");
+  searchQuery();
+}
+
+init();
 
 function getBackground(city) {
-$('body').css("background-image", "url('https://source.unsplash.com/"
-+ bgWidth
-+ "x"
-+ bgHeight
-+ "/?"
-+ city
-+ "')")
+  $("body").css(
+    "background-image",
+    "url('https://source.unsplash.com/" +
+      bgWidth +
+      "x" +
+      bgHeight +
+      "/?" +
+      city +
+      "')"
+  );
 }
 
 $("#search-form").submit(() => {
@@ -20,12 +29,12 @@ $("#search-form").submit(() => {
 });
 
 function searchQuery() {
-  var userInputEl = $("#user-input").val()
+  var userInputEl = $("#user-input").val();
   clearData();
   cityArr.push(userInputEl);
   getForecast(userInputEl);
   getBackground(userInputEl);
-  getBackground(userInputEl)
+  getBackground(userInputEl);
   $("#user-input").val("");
 }
 
@@ -67,7 +76,7 @@ function getCurrent(location) {
 
 function forecastWeather(data, day) {
   var dataArr = [
-    //getDate(data, day),
+    getDate(data, day),
     getIcon(data, day),
     getTemp(data, day),
     getWind(data, day),
@@ -85,6 +94,7 @@ function forecastWeather(data, day) {
 }
 
 function currentWeather(data) {
+  console.log(data)
   var temptest = data.dt * 1000;
   var currentDate = new Date(temptest);
 
@@ -97,12 +107,32 @@ function currentWeather(data) {
     .attr("src", `http://openweathermap.org/img/wn/${icon}.png`);
   // console.log(data.weather[0].icon);
   $("#title").append(cityEl, dateEl, iconEl);
+  $('#today').append(data.main.temp + " °F")
+  $('#today').append(data.wind.speed + " MPH")
+  $('#today').append(data.main.humidity + " %")
 }
 
 function createButton(city) {
-  var newButton = $("<button>").text(city);
+  //uppercase first letter
+  var cityArr = city.split(" ");
+  var cityFin = "";
+  console.log(cityArr);
+  var count = 0;
+  for (var i = 0; i < cityArr.length; i++) {
+    for (var j = 0; j < cityArr[i].length; j++) {
+      i > 0 && j === 0 && (cityFin += " ")
+      if (j === 0) {
+        cityFin += cityArr[i][j].toUpperCase();
+      } else {
+        cityFin += cityArr[i][j];
+      }
+      count++;
+    }
+  }
+  console.log(cityArr);
+  var newButton = $("<button>").text(cityFin);
   newButton.click((event) => {
-    $("#user-input").val(city);
+    $("#user-input").val(cityFin);
     searchQuery();
     event.target.remove();
   });
@@ -112,14 +142,14 @@ function createButton(city) {
 function getCity(data) {
   return $("<h2>").attr("class", "city").text(data.city.name);
 }
-// function getDate(data, d, element) {
-//   var rawD = data.list[d].dt_txt;
-//   var parD = rawD.split(/[\s-]/);
+function getDate(data, day) {
+  var rawD = data.list[day].dt_txt;
+  var parD = rawD.split(/[\s-]/);
 
-//   return $(`${element}`)
-//     .attr("class", "date")
-//     .text("(" + parD[1] + "/" + parD[2] + "/" + parD[0] + ")");
-// }
+  return $('<p>')
+    .attr("class", "date")
+    .text("(" + parD[1] + "/" + parD[2] + "/" + parD[0] + ")");
+}
 function getIcon(data, d) {
   icon = data.list[d].weather[0].icon;
 
