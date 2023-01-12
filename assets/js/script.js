@@ -1,5 +1,17 @@
 var apikey = "e5e80f690a1de46cd1c48d028667801f";
 var cityArr = new Array();
+var bgWidth = 700
+var bgHeight = 900
+
+function getBackground(city) {
+$('body').css("background-image", "url('https://source.unsplash.com/"
++ bgWidth
++ "x"
++ bgHeight
++ "/?"
++ city
++ "')")
+}
 
 $("#search-form").submit(() => {
   event?.preventDefault();
@@ -8,9 +20,12 @@ $("#search-form").submit(() => {
 });
 
 function searchQuery() {
+  var userInputEl = $("#user-input").val()
   clearData();
-  cityArr.push($("#user-input").val());
-  getForecast($("#user-input").val());
+  cityArr.push(userInputEl);
+  getForecast(userInputEl);
+  getBackground(userInputEl);
+  getBackground(userInputEl)
   $("#user-input").val("");
 }
 
