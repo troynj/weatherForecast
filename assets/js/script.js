@@ -105,11 +105,12 @@ function currentWeather(data) {
   var iconEl = $("<img>")
     .attr("class", "icon")
     .attr("src", `http://openweathermap.org/img/wn/${icon}.png`);
-  // console.log(data.weather[0].icon);
+    var tempEl = $("<h3>").text("Temp: " + data.main.temp + " °F");
+    var wSpeedEl = $("<h3>").text("Wind: " + data.wind.speed + " MPH");
+    var humidityEl = $("<h3>").text("Humidity: " + data.main.humidity + " %")
   $("#title").append(cityEl, dateEl, iconEl);
-  $('#today').append(data.main.temp + " °F")
-  $('#today').append(data.wind.speed + " MPH")
-  $('#today').append(data.main.humidity + " %")
+  $('#today').append(tempEl, wSpeedEl, humidityEl)
+  
 }
 
 function createButton(city) {
