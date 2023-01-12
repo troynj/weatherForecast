@@ -21,11 +21,11 @@ This website makes api calls to get the weather forecast for the current day and
 
 ## Screenshot
 
-![screenshot](./assets/images/dayplanner.png) 
+![screenshot](./assets/images/preview.png) 
 
 ## Usage
 
-go to [my github repo](https://github.com/troynj/dailyPlanner) to clone the repo
+go to [my github repo](https://github.com/troynj/weatherForecast) to clone the repo
 
 ## Technologies Used
 
