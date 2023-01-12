@@ -18,7 +18,6 @@ function clearData() {
   $("#today").empty();
   $("#today").append($("<span>").attr("id", "title"));
   $("#fc-section").empty();
-
 }
 
 //gives access to location
@@ -33,7 +32,7 @@ function getForecast(city) {
       console.log(data);
       createButton(city);
       for (var day = 0; day < 40; day += 8) {
-        forecastWeather(data, day)
+        forecastWeather(data, day);
       }
       getCurrent(data.city.coord);
     });
@@ -71,12 +70,12 @@ function forecastWeather(data, day) {
 }
 
 function currentWeather(data) {
+  var temptest = data.dt * 1000;
+  var currentDate = new Date(temptest);
 
-  var currentDate = new Date(data.dt)
-  console.log(currentDate)
-  console.log(currentDate.toLocaleString("GMT"))
+  var dateArr = currentDate.toLocaleString("GMT").split(",");
   var cityEl = $("<h2>").text(data.name);
-  var dateEl = $("<h2>").text(data.dt);
+  var dateEl = $("<h2>").text("(" + dateArr[0] + ")");
   var icon = data.weather[0].icon;
   var iconEl = $("<img>")
     .attr("class", "icon")
